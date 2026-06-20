@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { ChevronDown, Phone, Mail } from 'lucide-react';
+import { PHONE_TEL, PHONE_LABEL, LEAD_EMAIL } from '@/lib/constants';
 
 const faqs = [
   {
     question: 'How much does a typical move cost?',
-    answer: 'The cost of your move depends on several factors including distance, volume of items, and any additional services like packing. We offer free estimates with no hidden fees. Call us at (561) 212-7570 for a personalized quote.',
+    answer: `The cost of your move depends on several factors including distance, volume of items, and any additional services like packing. We offer free estimates with no hidden fees. Call us at ${PHONE_LABEL} for a personalized quote.`,
   },
   {
     question: 'Are you licensed and insured?',
@@ -90,14 +91,14 @@ export function FAQ() {
           <p className="text-[#0A0A0A] font-bold mb-4">Still have questions?</p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8">
             <a
-              href="tel:5612127570"
+              href={PHONE_TEL}
               className="flex items-center gap-2 text-gray-600 hover:text-[#a02135] transition-colors"
             >
               <Phone className="w-5 h-5" />
-              (561) 212-7570
+              {PHONE_LABEL}
             </a>
             <a
-              href="mailto:move@wemoveondemand.com"
+              href={`mailto:${LEAD_EMAIL}`}
               className="flex items-center gap-2 text-gray-600 hover:text-[#a02135] transition-colors"
             >
               <Mail className="w-5 h-5" />

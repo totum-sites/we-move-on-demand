@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, Phone } from 'lucide-react';
+import { PHONE_TEL } from '@/lib/constants';
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -57,7 +58,7 @@ export function Header() {
 
           {/* CTA Button */}
           <div className="hidden lg:flex items-center gap-4">
-            <a href="tel:5612127570" className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white text-xs font-medium uppercase tracking-widest px-6 py-3 rounded-full hover:bg-[#a02135] hover:scale-105 transition-all shadow-lg">
+            <a href={PHONE_TEL} className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white text-xs font-medium uppercase tracking-widest px-6 py-3 rounded-full hover:bg-[#a02135] hover:scale-105 transition-all shadow-lg">
               <Phone className="w-4 h-4" />
               Get Free Quote
             </a>
@@ -89,7 +90,7 @@ export function Header() {
                 {link.label}
               </a>
             ))}
-            <a href="tel:5612127570" className="inline-flex items-center justify-center gap-2 bg-[#a02135] text-white text-xs font-medium uppercase tracking-widest px-6 py-3 rounded-full hover:bg-[#c41e46] transition-all mt-4">
+            <a href={PHONE_TEL} className="inline-flex items-center justify-center gap-2 bg-[#a02135] text-white text-xs font-medium uppercase tracking-widest px-6 py-3 rounded-full hover:bg-[#c41e46] transition-all mt-4">
               <Phone className="w-4 h-4" />
               Get Free Quote
             </a>

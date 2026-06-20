@@ -1,5 +1,13 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { Resend } from 'resend';
+import {
+  ADDRESS,
+  LEAD_FROM_EMAIL,
+  LEAD_TO_EMAIL,
+  PHONE_LABEL,
+  PHONE_TEL,
+  SITE_URL,
+} from '../src/lib/constants';
 
 type QuotePayload = {
   name?: string;
@@ -11,10 +19,9 @@ type QuotePayload = {
   source?: string;
 };
 
-const TO_EMAIL = process.env.LEAD_TO_EMAIL || 'move@wemoveondemand.com';
-const FROM_EMAIL = process.env.LEAD_FROM_EMAIL || 'move@wemoveondemand.com';
+const TO_EMAIL = process.env.LEAD_TO_EMAIL || LEAD_TO_EMAIL;
+const FROM_EMAIL = process.env.LEAD_FROM_EMAIL || LEAD_FROM_EMAIL;
 const FROM_NAME = 'We Move On Demand';
-const SITE_URL = 'https://wemoveondemand.com';
 
 function escapeHtml(s: string): string {
   return s
@@ -48,7 +55,7 @@ function buildLeadHtml(payload: {
     <div style="font-family:Inter,Arial,sans-serif;max-width:560px;margin:0 auto;padding:24px;background:#F3F3F1;">
       <div style="background:#fff;border-radius:16px;padding:28px;">
         <h2 style="color:#a02135;margin:0 0 16px;font-size:22px;">New Quote Request</h2>
-        <p style="color:#666;margin:0 0 20px;font-size:13px;">Submitted from <b>${escapeHtml(payload.source)}</b> at ${payload.receivedAt}</p>
+        <p style="color:#666;margin:0 0 20px;font-size:13px;">Submitted from <b>${escapeHtml(payload.source)}</b> at ${escapeHtml(payload.receivedAt)}</p>
         <table style="width:100%;border-collapse:collapse;font-size:15px;color:#0A0A0A;">
           <tr><td style="padding:8px 0;color:#888;width:130px;">Name</td><td><b>${escapeHtml(payload.name)}</b></td></tr>
           <tr><td style="padding:8px 0;color:#888;">Phone</td><td><a href="tel:${escapeHtml(payload.phone)}" style="color:#a02135;text-decoration:none;"><b>${escapeHtml(payload.phone)}</b></a></td></tr>
@@ -108,13 +115,13 @@ function buildAutoReplyHtml(name: string): string {
           If your move is urgent, feel free to call us directly and mention your quote request.
         </p>
 
-        <a href="tel:5612127570" style="display:inline-flex;align-items:center;gap:8px;background:#a02135;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:9999px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;">
-          Call (561) 212-7570
+        <a href="${PHONE_TEL}" style="display:inline-flex;align-items:center;gap:8px;background:#a02135;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:9999px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;">
+          Call ${PHONE_LABEL}
         </a>
 
         <div style="margin-top:32px;padding-top:24px;border-top:1px solid #e5e7eb;">
           <p style="color:#9ca3af;margin:0 0 4px;font-size:13px;">Licensed & Insured · BBB A+ Rated</p>
-          <p style="color:#9ca3af;margin:0;font-size:12px;">29 NW 13th St Suite 22-1, Boca Raton, FL 33432</p>
+          <p style="color:#9ca3af;margin:0;font-size:12px;">${ADDRESS}</p>
         </div>
       </div>
 
@@ -134,10 +141,10 @@ function buildAutoReplyText(name: string): string {
     `- Our team is reviewing your request right now.\n` +
     `- We will reach out to you shortly — usually within a few hours during business hours.\n` +
     `- We will discuss your moving details and provide a transparent, no-hidden-fee quote.\n\n` +
-    `If your move is urgent, feel free to call us directly at (561) 212-7570 and mention your quote request.\n\n` +
+    `If your move is urgent, feel free to call us directly at ${PHONE_LABEL} and mention your quote request.\n\n` +
     `We Move On Demand\n` +
     `Licensed & Insured · BBB A+ Rated\n` +
-    `29 NW 13th St Suite 22-1, Boca Raton, FL 33432\n\n` +
+    `${ADDRESS}\n\n` +
     `This is an automated message. Please do not reply directly to this email.`
   );
 }
@@ -157,12 +164,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const body = (typeof req.body === 'string' ? safeParse(req.body) : req.body) as QuotePayload;
   if (!body) return res.status(400).json({ ok: false, error: 'Invalid JSON body' });
 
-  const name = (body.name || '').trim();
-  const phone = (body.phone || '').trim();
-  const email = (body.email || '').trim();
-  const movingDate = (body.movingDate || '').trim();
-  const fromZip = (body.fromZip || '').trim();
-  const toZip = (body.toZip || '').trim();
+  const name = (body.name || '').trim().slice(0, 100);
+  const phone = (body.phone || '').trim().slice(0, 30);
+  const email = (body.email || '').trim().slice(0, 254);
+  const movingDate = (body.movingDate || '').trim().slice(0, 30);
+  const fromZip = (body.fromZip || '').trim().slice(0, 10);
+  const toZip = (body.toZip || '').trim().slice(0, 10);
   const source = (body.source || 'website').trim().slice(0, 50);
 
   if (!name || name.length < 2) return res.status(400).json({ ok: false, error: 'Name is required' });

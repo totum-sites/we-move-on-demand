@@ -1,5 +1,5 @@
 import { Shield, Award, Users, CheckCircle, Phone, MapPin, ExternalLink, Star } from 'lucide-react';
-import { BBB_PROFILE_URL, PHONE_TEL } from '@/lib/constants';
+import { BBB_PROFILE_URL, PHONE_TEL, PHONE_LABEL, ADDRESS } from '@/lib/constants';
 
 const stats = [
   { value: 'A+', label: 'BBB Rating', icon: Award, highlight: true },
@@ -78,7 +78,7 @@ export function About() {
             <p className="paragraph-base mb-8">
               Book your move today and get a free estimate. Call{' '}
               <a href={PHONE_TEL} className="text-[#a02135] font-semibold hover:underline">
-                (561) 212-7570
+                {PHONE_LABEL}
               </a>{' '}
               or use the form below.
             </p>
@@ -96,7 +96,7 @@ export function About() {
             {/* Address */}
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-8">
               <MapPin className="w-4 h-4 text-[#a02135] flex-shrink-0" />
-              29 NW 13th St Suite 22-1, Boca Raton, FL 33432
+              {ADDRESS}
             </div>
 
             {/* CTAs */}

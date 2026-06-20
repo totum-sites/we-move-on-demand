@@ -1,4 +1,5 @@
 import { Building2, Home, MapPin, Warehouse, Truck, Package, ArrowRight } from 'lucide-react';
+import { PHONE_TEL } from '@/lib/constants';
 
 const services = [
   {
@@ -92,7 +93,7 @@ export function Services() {
           <p className="text-gray-600 mb-4">
             Not sure which service you need? Let's talk about your move.
           </p>
-          <a href="tel:5612127570" className="btn-primary">
+          <a href={PHONE_TEL} className="btn-primary">
             <ArrowRight className="w-4 h-4" />
             Get a Free Consultation
           </a>
