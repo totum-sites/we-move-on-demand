@@ -23,6 +23,17 @@ const TO_EMAIL = process.env.LEAD_TO_EMAIL || LEAD_TO_EMAIL;
 const FROM_EMAIL = process.env.LEAD_FROM_EMAIL || LEAD_FROM_EMAIL;
 const FROM_NAME = 'We Move On Demand';
 
+const ALLOWED_ORIGINS = new Set([
+  SITE_URL,
+  'https://www.wemoveondemand.com',
+  'http://localhost:3000',
+  'http://localhost:5173',
+]);
+
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX_REQUESTS = 5;
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
 function escapeHtml(s: string): string {
   return s
     .replace(/&/g, '&amp;')
@@ -39,6 +50,61 @@ function isValidEmail(email: string): boolean {
 function isValidPhone(phone: string): boolean {
   const digits = phone.replace(/\D/g, '');
   return digits.length >= 7 && digits.length <= 15;
+}
+
+function getRequestIp(req: VercelRequest): string | undefined {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (typeof forwarded === 'string') {
+    return forwarded.split(',')[0].trim();
+  }
+  if (Array.isArray(forwarded)) {
+    return forwarded[0].trim();
+  }
+  return req.socket?.remoteAddress || 'unknown';
+}
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitStore.get(ip);
+
+  if (!entry || now > entry.resetAt) {
+    rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return true;
+  }
+
+  if (entry.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return false;
+  }
+
+  entry.count += 1;
+  return true;
+}
+
+function setCorsHeaders(req: VercelRequest, res: VercelResponse): void {
+  const origin = req.headers.origin;
+  if (origin && ALLOWED_ORIGINS.has(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+}
+
+function maskName(name: string): string {
+  if (name.length <= 2) return '*';
+  return `${name[0]}${'*'.repeat(name.length - 2)}${name[name.length - 1]}`;
+}
+
+function maskPhone(phone: string): string {
+  const digits = phone.replace(/\D/g, '');
+  if (digits.length <= 4) return '****';
+  return `****${digits.slice(-4)}`;
+}
+
+function maskEmail(email: string): string {
+  const [local, domain] = email.split('@');
+  if (!domain) return '****';
+  const maskedLocal = local.length <= 2 ? '**' : `${local.slice(0, 2)}***`;
+  return `${maskedLocal}@${domain}`;
 }
 
 function buildLeadHtml(payload: {
@@ -150,9 +216,25 @@ function buildAutoReplyText(name: string): string {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  setCorsHeaders(req, res);
+
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+
   if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
+    res.setHeader('Allow', 'POST, OPTIONS');
     return res.status(405).json({ ok: false, error: 'Method not allowed' });
+  }
+
+  const contentType = req.headers['content-type'] || '';
+  if (!contentType.includes('application/json')) {
+    return res.status(415).json({ ok: false, error: 'Content-Type must be application/json' });
+  }
+
+  const ip = getRequestIp(req);
+  if (ip && !checkRateLimit(ip)) {
+    return res.status(429).json({ ok: false, error: 'Too many requests. Please try again later.' });
   }
 
   const apiKey = process.env.RESEND_API_KEY;
@@ -178,8 +260,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const receivedAt = new Date().toISOString();
 
-  // Structured log = backup of every lead (visible in Vercel logs/Drain)
-  console.log('[lead]', JSON.stringify({ receivedAt, source, name, phone, email, movingDate, fromZip, toZip }));
+  // Structured log = backup of every lead, but with PII masked.
+  console.log(
+    '[lead]',
+    JSON.stringify({
+      receivedAt,
+      source,
+      name: maskName(name),
+      phone: maskPhone(phone),
+      email: email ? maskEmail(email) : undefined,
+      movingDate,
+      fromZip,
+      toZip,
+    })
+  );
 
   const resend = new Resend(apiKey);
 
