@@ -23,32 +23,32 @@ function App() {
       <main>
         <Hero />
         <ErrorBoundary>
-          <Suspense fallback={<div className="h-24 bg-white" />}>
+          <Suspense fallback={<div className="h-24 bg-white" role="status" aria-live="polite"><span className="sr-only">Carregando serviços...</span></div>}>
             <Services />
           </Suspense>
         </ErrorBoundary>
         <ErrorBoundary>
-          <Suspense fallback={<div className="h-24 bg-[#F3F3F1]" />}>
+          <Suspense fallback={<div className="h-24 bg-[#F3F3F1]" role="status" aria-live="polite"><span className="sr-only">Carregando sobre...</span></div>}>
             <About />
           </Suspense>
         </ErrorBoundary>
         <ErrorBoundary>
-          <Suspense fallback={<div className="h-24 bg-white" />}>
+          <Suspense fallback={<div className="h-24 bg-white" role="status" aria-live="polite"><span className="sr-only">Carregando depoimentos...</span></div>}>
             <Testimonials />
           </Suspense>
         </ErrorBoundary>
         <ErrorBoundary>
-          <Suspense fallback={<div className="h-24 bg-white" />}>
+          <Suspense fallback={<div className="h-24 bg-white" role="status" aria-live="polite"><span className="sr-only">Carregando galeria...</span></div>}>
             <RealMoves />
           </Suspense>
         </ErrorBoundary>
         <ErrorBoundary>
-          <Suspense fallback={<div className="h-24 bg-[#F3F3F1]" />}>
+          <Suspense fallback={<div className="h-24 bg-[#F3F3F1]" role="status" aria-live="polite"><span className="sr-only">Carregando perguntas frequentes...</span></div>}>
             <FAQ />
           </Suspense>
         </ErrorBoundary>
         <ErrorBoundary>
-          <Suspense fallback={<div className="h-24 bg-white" />}>
+          <Suspense fallback={<div className="h-24 bg-white" role="status" aria-live="polite"><span className="sr-only">Carregando formulário...</span></div>}>
             <FreeEstimate />
           </Suspense>
         </ErrorBoundary>

@@ -21,7 +21,7 @@ Shared submit hook: [src/hooks/useQuoteSubmit.ts](src/hooks/useQuoteSubmit.ts).
 | ----------------- | ----------------------------------------------------------------------- |
 | `RESEND_API_KEY`  | Resend API key — create at https://resend.com/api-keys                  |
 | `LEAD_TO_EMAIL`   | Recipient. Default `move@wemoveondemand.com`                            |
-| `LEAD_FROM_EMAIL` | Verified sender. Default `leads@wemoveondemand.com`                     |
+| `LEAD_FROM_EMAIL` | Verified sender. Default `move@wemoveondemand.com`                      |
 
 ### Deploy checklist
 
