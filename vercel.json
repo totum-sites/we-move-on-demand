@@ -1,5 +1,7 @@
 {
   "rewrites": [
+    { "source": "/privacy-policy", "destination": "/privacy.html" },
+    { "source": "/terms-and-conditions", "destination": "/terms.html" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
@@ -28,7 +30,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+          "value": "default-src 'self'; script-src 'self' 'sha256-RMuZXTnX/TcrQYTNXRjiVCWd0YRVcZXIuU8+t2FhgGM=' 'sha256-9s1W9GMFxVAE7Cul5Y0hKA611tGPYxaAcBxtT9cP0Do='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
         }
       ]
     }

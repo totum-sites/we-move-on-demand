@@ -16,6 +16,7 @@ type QuotePayload = {
   movingDate?: string;
   fromZip?: string;
   toZip?: string;
+  smsConsent?: boolean;
   source?: string;
 };
 
@@ -114,6 +115,7 @@ function buildLeadHtml(payload: {
   movingDate: string;
   fromZip: string;
   toZip: string;
+  smsConsent: boolean;
   source: string;
   receivedAt: string;
 }): string {
@@ -129,6 +131,7 @@ function buildLeadHtml(payload: {
           ${payload.movingDate ? `<tr><td style="padding:8px 0;color:#888;">Moving Date</td><td>${escapeHtml(payload.movingDate)}</td></tr>` : ''}
           ${payload.fromZip ? `<tr><td style="padding:8px 0;color:#888;">From ZIP</td><td>${escapeHtml(payload.fromZip)}</td></tr>` : ''}
           ${payload.toZip ? `<tr><td style="padding:8px 0;color:#888;">To ZIP</td><td>${escapeHtml(payload.toZip)}</td></tr>` : ''}
+          <tr><td style="padding:8px 0;color:#888;">SMS Consent</td><td><b>${payload.smsConsent ? 'Yes' : 'No'}</b></td></tr>
         </table>
       </div>
       <p style="color:#999;font-size:12px;text-align:center;margin-top:16px;">wemoveondemand.com</p>
@@ -143,6 +146,7 @@ function buildLeadText(payload: {
   movingDate: string;
   fromZip: string;
   toZip: string;
+  smsConsent: boolean;
   source: string;
   receivedAt: string;
 }): string {
@@ -152,7 +156,8 @@ function buildLeadText(payload: {
     `Name:  ${payload.name}\nPhone: ${payload.phone}\nEmail: ${payload.email || '—'}\n` +
     (payload.movingDate ? `Moving Date: ${payload.movingDate}\n` : '') +
     (payload.fromZip ? `From ZIP: ${payload.fromZip}\n` : '') +
-    (payload.toZip ? `To ZIP: ${payload.toZip}\n` : '')
+    (payload.toZip ? `To ZIP: ${payload.toZip}\n` : '') +
+    `SMS Consent: ${payload.smsConsent ? 'Yes' : 'No'}\n`
   );
 }
 
@@ -252,10 +257,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const movingDate = (body.movingDate || '').trim().slice(0, 30);
   const fromZip = (body.fromZip || '').trim().slice(0, 10);
   const toZip = (body.toZip || '').trim().slice(0, 10);
+  const smsConsent = body.smsConsent === true;
   const source = (body.source || 'website').trim().slice(0, 50);
 
   if (!name || name.length < 2) return res.status(400).json({ ok: false, error: 'Name is required' });
   if (!phone || !isValidPhone(phone)) return res.status(400).json({ ok: false, error: 'Valid phone is required' });
+  if (!smsConsent) return res.status(400).json({ ok: false, error: 'SMS consent is required' });
   if (email && !isValidEmail(email)) return res.status(400).json({ ok: false, error: 'Invalid email' });
 
   const receivedAt = new Date().toISOString();
@@ -272,14 +279,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       movingDate,
       fromZip,
       toZip,
+      smsConsent,
     })
   );
 
   const resend = new Resend(apiKey);
 
   // 1. Send lead notification to owner
-  const leadHtml = buildLeadHtml({ receivedAt, source, name, phone, email, movingDate, fromZip, toZip });
-  const leadText = buildLeadText({ receivedAt, source, name, phone, email, movingDate, fromZip, toZip });
+  const leadHtml = buildLeadHtml({ receivedAt, source, name, phone, email, movingDate, fromZip, toZip, smsConsent });
+  const leadText = buildLeadText({ receivedAt, source, name, phone, email, movingDate, fromZip, toZip, smsConsent });
 
   try {
     const { error: leadError } = await resend.emails.send({

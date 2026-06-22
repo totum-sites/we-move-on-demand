@@ -8,6 +8,7 @@ export type QuoteFields = {
   movingDate?: string;
   fromZip?: string;
   toZip?: string;
+  smsConsent?: boolean;
 };
 
 type SubmitState = 'idle' | 'loading' | 'success' | 'error';

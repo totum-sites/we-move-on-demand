@@ -159,11 +159,11 @@ export function Footer() {
             © {new Date().getFullYear()} We Move On Demand. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
-            <a href="/privacy.html" className="text-gray-500 text-sm hover:text-white transition-colors">
+            <a href="/privacy-policy" className="text-gray-500 text-sm hover:text-white transition-colors">
               Privacy Policy
             </a>
-            <a href="/terms.html" className="text-gray-500 text-sm hover:text-white transition-colors">
-              Terms of Service
+            <a href="/terms-and-conditions" className="text-gray-500 text-sm hover:text-white transition-colors">
+              Terms and Conditions
             </a>
           </div>
         </div>
