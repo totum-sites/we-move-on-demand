@@ -14,12 +14,13 @@ export function FreeEstimate() {
     fromZip: '',
     toZip: '',
   });
+  const [smsConsent, setSmsConsent] = useState(false);
   const { submit, isLoading, state, errorMessage, reset } = useQuoteSubmit('free-estimate-section');
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fields.name || !fields.phone) return;
-    const ok = await submit(fields);
+    if (!fields.name || !fields.phone || !smsConsent) return;
+    const ok = await submit({ ...fields, smsConsent });
     if (ok) setIsSubmitted(true);
   };
 
@@ -129,10 +130,27 @@ export function FreeEstimate() {
                 </div>
               )}
 
+              <div>
+                <label className="flex items-start gap-3 text-xs text-gray-600 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    required
+                    checked={smsConsent}
+                    onChange={(e) => setSmsConsent(e.target.checked)}
+                    className="mt-0.5 w-4 h-4 rounded border-gray-300 text-[#a02135] focus:ring-[#a02135] flex-shrink-0"
+                    disabled={isLoading}
+                  />
+                  <span>
+                    I consent to receive SMS communications from We Move On Demand. Message and data
+                    rates may apply. Reply STOP to opt out.
+                  </span>
+                </label>
+              </div>
+
               <button
                 type="submit"
                 className="w-full inline-flex items-center justify-center gap-2 bg-[#a02135] text-white text-xs font-bold uppercase tracking-widest px-6 py-3.5 rounded-full hover:bg-[#c41e46] hover:scale-[1.02] transition-all shadow-lg disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
-                disabled={isLoading || !fields.name || !fields.phone}
+                disabled={isLoading || !fields.name || !fields.phone || !smsConsent}
               >
                 {isLoading ? (
                   <>
@@ -217,6 +235,7 @@ export function FreeEstimate() {
         if (!open) {
           reset();
           setFields({ name: '', phone: '', email: '', movingDate: '', fromZip: '', toZip: '' });
+          setSmsConsent(false);
         }
       }}>
         <DialogContent className="bg-white border-gray-200 text-[#0A0A0A] max-w-md">

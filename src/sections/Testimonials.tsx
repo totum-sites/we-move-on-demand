@@ -60,8 +60,8 @@ export function Testimonials() {
             What Our <span className="text-[#a02135]">Clients Say</span>
           </h2>
           <p className="paragraph-large max-w-2xl mx-auto">
-            Don't just take our word for it. Here's what over 600 satisfied customers 
-            have to say about their experience with We Move On Demand.
+            Don't just take our word for it. Here's what our customers have to say
+            about their experience with We Move On Demand.
           </p>
         </div>
 

@@ -73,7 +73,7 @@ export function RealMoves() {
             Real Moves. <span className="text-[#a02135]">Real Customers.</span>
           </h2>
           <p className="paragraph-large max-w-xl mx-auto">
-            No stock photos. Every photo and video below is from a real We Move On Demand job in Florida.
+            A behind-the-scenes look at how We Move On Demand operates across Florida. Real moves, real crew, real care.
           </p>
         </div>
 

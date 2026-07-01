@@ -18,11 +18,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- Non-render-blocking font load -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" as="style" />
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" /></noscript>
+    <script src="/js/font-loader.js"></script>
 
     <!-- Preload critical hero image (LCP element) -->
     <link rel="preload" as="image" href="/images/eduardo-hero.webp" />
+    <link rel="icon" href="/images/logo.webp" type="image/webp" />
   </head>
   <body>
     <div id="root"></div>

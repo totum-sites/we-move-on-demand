@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PHONE_LABEL } from '@/lib/constants';
 
 export type QuoteFields = {
   name: string;
@@ -7,6 +8,7 @@ export type QuoteFields = {
   movingDate?: string;
   fromZip?: string;
   toZip?: string;
+  smsConsent?: boolean;
 };
 
 type SubmitState = 'idle' | 'loading' | 'success' | 'error';
@@ -26,14 +28,14 @@ export function useQuoteSubmit(source: string) {
       });
       const data = await res.json().catch(() => ({ ok: false, error: 'Invalid response' }));
       if (!res.ok || !data.ok) {
-        setErrorMessage(data?.error || 'Something went wrong. Please call us at (561) 212-7570.');
+        setErrorMessage(data?.error || `Something went wrong. Please call us at ${PHONE_LABEL}.`);
         setState('error');
         return false;
       }
       setState('success');
       return true;
     } catch {
-      setErrorMessage('Network error. Please call us at (561) 212-7570.');
+      setErrorMessage(`Network error. Please call us at ${PHONE_LABEL}.`);
       setState('error');
       return false;
     }

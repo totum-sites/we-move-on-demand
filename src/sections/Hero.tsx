@@ -6,6 +6,7 @@ import { BBB_PROFILE_URL, PHONE_TEL } from '@/lib/constants';
 
 function HeroQuickForm({ variant, onSuccess }: { variant: 'desktop' | 'mobile'; onSuccess: () => void }) {
   const [fields, setFields] = useState({ name: '', phone: '', email: '' });
+  const [smsConsent, setSmsConsent] = useState(false);
   const { submit, isLoading, state, errorMessage } = useQuoteSubmit(`hero-${variant}`);
 
   const dark = variant === 'desktop';
@@ -18,11 +19,12 @@ function HeroQuickForm({ variant, onSuccess }: { variant: 'desktop' | 'mobile'; 
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fields.name || !fields.phone) return;
-    const ok = await submit(fields);
+    if (!fields.name || !fields.phone || !smsConsent) return;
+    const ok = await submit({ ...fields, smsConsent });
     if (ok) {
       onSuccess();
       setFields({ name: '', phone: '', email: '' });
+      setSmsConsent(false);
     }
   };
 
@@ -61,7 +63,27 @@ function HeroQuickForm({ variant, onSuccess }: { variant: 'desktop' | 'mobile'; 
         disabled={isLoading}
         className={inputCls}
       />
-      <button type="submit" className={btnCls} disabled={isLoading || !fields.name || !fields.phone}>
+      <div className={variant === 'desktop' ? 'col-span-1 sm:col-span-2 lg:col-span-4' : ''}>
+        <label
+          className={`flex items-start gap-3 text-xs cursor-pointer ${
+            dark ? 'text-white/80' : 'text-gray-600'
+          }`}
+        >
+          <input
+            type="checkbox"
+            required
+            checked={smsConsent}
+            onChange={(e) => setSmsConsent(e.target.checked)}
+            className="mt-0.5 w-4 h-4 rounded border-gray-300 text-[#a02135] focus:ring-[#a02135] flex-shrink-0"
+            disabled={isLoading}
+          />
+          <span>
+            I consent to receive SMS communications from We Move On Demand. Message and data rates may
+            apply. Reply STOP to opt out.
+          </span>
+        </label>
+      </div>
+      <button type="submit" className={btnCls} disabled={isLoading || !fields.name || !fields.phone || !smsConsent}>
         {isLoading ? (
           <>
             <Loader2 className="w-4 h-4 flex-shrink-0 animate-spin" />
