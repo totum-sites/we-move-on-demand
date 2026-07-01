@@ -21,7 +21,9 @@ type QuotePayload = {
 };
 
 const TO_EMAIL = process.env.LEAD_TO_EMAIL || LEAD_TO_EMAIL;
-const FROM_EMAIL = process.env.LEAD_FROM_EMAIL || LEAD_FROM_EMAIL;
+// Use Vercel domain temporarily since wemoveondemand.com is disconnected in Vercel
+// TODO: Switch back to LEAD_FROM_EMAIL once domain is reconnected
+const FROM_EMAIL = process.env.LEAD_FROM_EMAIL || 'noreply@we-move-on-demand.vercel.app';
 const FROM_NAME = 'We Move On Demand';
 
 const ALLOWED_ORIGINS = new Set([
